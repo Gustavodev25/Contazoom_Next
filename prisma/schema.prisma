@@ -1,0 +1,25 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  // CITEXT => unicidade e busca sem diferenciar MAIÚSC/ minúsc.
+  email        String   @unique @db.Citext
+  passwordHash String   @map("password_hash")
+  // ISO 3166-1 alpha-2 (ex: BR, US). Opcional.
+  country      String?  @db.VarChar(2)
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("usuario")
+}
